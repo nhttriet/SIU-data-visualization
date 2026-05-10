@@ -1,0 +1,315 @@
+import React, { useState } from 'react';
+import { 
+  LayoutDashboard, 
+  Truck, 
+  Star, 
+  BarChart3, 
+  Calendar, 
+  ChevronUp, 
+  ChevronDown,
+  Clock,
+  Package,
+  TrendingUp,
+  AlertCircle,
+  Activity,
+  Download,
+  Info,
+  MapPin,
+  Filter
+} from 'lucide-react';
+import { 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer, 
+  AreaChart, 
+  Area,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar
+} from 'recharts';
+
+// --- DỮ LIỆU MÔ PHỎNG (Phản ánh cấu trúc Olist Dataset) ---
+const trendData = [
+  { name: 'Jan', orders: 800, late: 4.2 },
+  { name: 'Mar', orders: 1100, late: 5.1 },
+  { name: 'May', orders: 1050, late: 4.8 },
+  { name: 'Jul', orders: 1400, late: 5.5 },
+  { name: 'Sep', orders: 1900, late: 6.2 },
+  { name: 'Nov', orders: 2400, late: 5.8 },
+  { name: 'Jan', orders: 2200, late: 5.2 },
+  { name: 'Mar', orders: 2800, late: 5.0 },
+];
+
+const stateData = [
+  { name: 'São Paulo', value: 42, color: '#3b82f6' },
+  { name: 'Rio de Janeiro', value: 18, color: '#2563eb' },
+  { name: 'Minas Gerais', value: 15, color: '#1d4ed8' },
+  { name: 'Paraná', value: 12, color: '#1e40af' },
+  { name: 'Others', value: 13, color: '#1e3a8a' },
+];
+
+// --- CÁC THÀNH PHẦN ATOMIC (ATOMIC COMPONENTS) ---
+
+const Badge = ({ children, variant = 'default' }) => {
+  const variants = {
+    default: 'bg-zinc-800 text-zinc-400 border-zinc-700',
+    blue: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    live: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 animate-pulse',
+  };
+  return (
+    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${variants[variant]}`}>
+      {children}
+    </span>
+  );
+};
+
+const KPICard = ({ label, value, delta, isUp, unit, icon: Icon, alert }) => (
+  <div className={`bg-zinc-900 border ${alert ? 'border-rose-500/30 shadow-[0_0_15px_rgba(244,63,94,0.1)]' : 'border-zinc-800'} p-6 rounded-2xl hover:border-zinc-700 transition-all group`}>
+    <div className="flex justify-between items-start mb-4">
+      <div className="p-2.5 bg-zinc-950 rounded-xl border border-zinc-800 text-zinc-500 group-hover:text-blue-400 transition-colors">
+        <Icon size={18} />
+      </div>
+      {delta && (
+        <div className={`flex items-center text-xs font-bold ${isUp ? 'text-emerald-400' : 'text-rose-400'}`}>
+          {isUp ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          {delta}
+        </div>
+      )}
+    </div>
+    <div className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold mb-1">{label}</div>
+    <div className="text-2xl font-semibold font-mono text-zinc-100 flex items-baseline">
+      {value}<span className="text-zinc-500 text-sm ml-1 font-sans">{unit}</span>
+    </div>
+  </div>
+);
+
+// --- THÀNH PHẦN CHÍNH (MAIN APP) ---
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState('Overview');
+
+  return (
+    <div className="flex h-screen bg-[#09090b] text-zinc-300 font-sans selection:bg-blue-500/30 overflow-hidden">
+      
+      {/* THANH ĐIỀU HƯỚNG TRÁI (SIDEBAR) */}
+      <aside className="w-72 border-r border-zinc-800 flex flex-col p-8 hidden lg:flex bg-[#09090b]">
+        <div className="flex items-center gap-4 mb-12">
+          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-[0_0_30px_rgba(37,99,235,0.4)]">
+            <Activity size={22} />
+          </div>
+          <div>
+            <h1 className="text-zinc-100 font-extrabold text-xl leading-none tracking-tight">OLIST</h1>
+            <p className="text-[10px] text-zinc-600 tracking-[0.2em] font-bold uppercase mt-1">Intelligence</p>
+          </div>
+        </div>
+
+        <nav className="space-y-1 mb-10">
+          <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest mb-4 px-3">Phân tích hệ thống</p>
+          {[
+            { id: 'Overview', icon: LayoutDashboard, label: 'Tổng Quan' },
+            { id: 'Logistics', icon: Truck, label: 'Logistics Tuyến' },
+            { id: 'Reviews', icon: Star, label: 'Đánh Giá CSAT' },
+            { id: 'Reports', icon: BarChart3, label: 'Báo Cáo Kiểm Toán' },
+          ].map(item => (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all group ${
+                activeTab === item.id 
+                ? 'bg-zinc-900 text-zinc-100 border border-zinc-800 shadow-sm' 
+                : 'text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900/50'
+              }`}
+            >
+              <item.icon size={18} className={activeTab === item.id ? 'text-blue-500' : 'group-hover:text-zinc-300'} />
+              <span className="font-medium">{item.label}</span>
+            </button>
+          ))}
+        </nav>
+
+        <div className="mt-auto space-y-4">
+          <div className="p-5 bg-zinc-900/40 border border-zinc-800/50 rounded-2xl">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] text-zinc-500 font-bold uppercase">Trạng thái</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]" />
+            </div>
+            <p className="text-[10px] text-zinc-600 leading-relaxed font-medium">
+              Đã đồng bộ 15 tệp dữ liệu từ Drive Folder: <span className="text-zinc-400">Olist_PRD_2018</span>
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      {/* KHU VỰC NỘI DUNG CHÍNH (MAIN CONTENT) */}
+      <main className="flex-1 overflow-y-auto bg-[#09090b]">
+        
+        {/* THANH CÔNG CỤ TRÊN (TOP TOOLBAR) */}
+        <header className="sticky top-0 z-20 bg-[#09090b]/80 backdrop-blur-xl border-b border-zinc-800/50 px-10 py-8 flex justify-between items-end">
+          <div>
+            <div className="flex gap-2 mb-2">
+              <Badge>D_VER: 2.4.0</Badge>
+              <Badge variant="live">Live Snapshot</Badge>
+            </div>
+            <h2 className="text-4xl font-bold text-white tracking-tighter">Logistics Summary</h2>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-xl text-xs font-semibold text-zinc-400 cursor-default">
+              <Calendar size={14} />
+              <span>Jan 2017 - Sep 2018</span>
+            </div>
+            <button className="bg-white text-zinc-950 hover:bg-zinc-200 px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-xl shadow-white/5">
+              <Download size={14} />
+              Xuất Report
+            </button>
+          </div>
+        </header>
+
+        <div className="p-10 max-w-7xl mx-auto space-y-8 pb-20">
+          
+          {/* LƯỚI CHỈ SỐ KPI (KPI GRID) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <KPICard label="Tổng Đơn Hàng" value="12,842" delta="12.4%" isUp={true} unit="" icon={Package} />
+            <KPICard label="Tỷ Lệ Giao Trễ" value="5.2" delta="0.8%" isUp={false} unit="%" icon={Clock} alert={true} />
+            <KPICard label="Thời Gian Giao TB" value="10.2" delta="1.5d" isUp={true} unit="d" icon={Truck} />
+            <KPICard label="Điểm CSAT" value="4.12" delta="0.05" isUp={true} unit="★" icon={Star} />
+          </div>
+
+          {/* LƯỚI BIỂU ĐỒ (CHARTS GRID) */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 bg-zinc-900 border border-zinc-800 rounded-3xl p-8 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                <TrendingUp size={120} />
+              </div>
+              <div className="mb-8">
+                <h3 className="text-white font-bold text-lg mb-1">Operational Trend</h3>
+                <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Monthly Volume vs Satisfaction Benchmark</p>
+              </div>
+              <div className="h-72 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={trendData}>
+                    <defs>
+                      <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+                    <XAxis 
+                      dataKey="name" 
+                      stroke="#52525b" 
+                      fontSize={10} 
+                      tickLine={false} 
+                      axisLine={false}
+                      dy={10}
+                    />
+                    <YAxis 
+                      stroke="#52525b" 
+                      fontSize={10} 
+                      tickLine={false} 
+                      axisLine={false}
+                    />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: '12px', fontSize: '12px' }}
+                      itemStyle={{ color: '#fafafa' }}
+                    />
+                    <Area type="monotone" dataKey="orders" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorOrders)" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
+              <h3 className="text-white font-bold text-lg mb-1">State Efficiency</h3>
+              <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-10">Phân bổ vùng miền trọng yếu</p>
+              <div className="space-y-6">
+                {stateData.map((item, idx) => (
+                  <div key={idx} className="group cursor-default">
+                    <div className="flex justify-between text-xs font-semibold mb-2">
+                      <span className="text-zinc-400 group-hover:text-zinc-100 transition-colors">{item.name}</span>
+                      <span className="text-white font-mono">{item.value}%</span>
+                    </div>
+                    <div className="w-full bg-zinc-950 h-1.5 rounded-full overflow-hidden border border-zinc-800/50">
+                      <div 
+                        className="h-full rounded-full transition-all duration-1000 ease-out" 
+                        style={{ width: `${item.value}%`, backgroundColor: item.color }} 
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* PHÂN TÍCH TÁC ĐỘNG (IMPACT ANALYSIS) - THE "LINEAR" BLOCK */}
+          <div className="bg-zinc-900 border border-zinc-800 rounded-[2.5rem] p-10 group hover:border-blue-500/30 transition-all duration-500">
+            <div className="flex items-center gap-4 mb-10">
+              <div className="p-3 bg-rose-500/10 rounded-2xl text-rose-500 group-hover:scale-110 transition-transform duration-500">
+                <AlertCircle size={28} />
+              </div>
+              <div>
+                <h3 className="text-white font-bold text-xl tracking-tight">Impact Analysis: Delivery vs Satisfaction</h3>
+                <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mt-1">Correlation: -0.84 (Strong Negative)</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+              <div className="md:col-span-2 relative h-56 bg-zinc-950 rounded-3xl border border-zinc-800 flex items-center justify-center overflow-hidden group/viz">
+                <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:24px_24px] group-hover/viz:scale-110 transition-transform duration-700" />
+                <div className="z-10 text-center">
+                  <p className="text-[10px] text-zinc-500 font-extrabold uppercase tracking-[0.3em] mb-4">Regression Coefficient</p>
+                  <div className="text-6xl font-mono font-bold text-rose-500 tracking-tighter mb-4">-0.12<span className="text-2xl ml-1 text-rose-900">pts</span></div>
+                  <p className="text-zinc-400 text-sm font-medium px-10 leading-relaxed">
+                    MỖI <span className="text-white font-bold">1 NGÀY CHẬM TRỄ</span> LÀM SỤT GIẢM TRỰC TIẾP ĐIỂM HÀI LÒNG KHÁCH HÀNG.
+                  </p>
+                </div>
+                {/* SVG Decor */}
+                <svg className="absolute bottom-0 left-0 w-full h-20 opacity-20" viewBox="0 0 100 20">
+                   <path d="M0 20 Q 25 5, 50 15 T 100 0" fill="none" stroke="#f43f5e" strokeWidth="0.5" />
+                </svg>
+              </div>
+
+              <div className="flex flex-col justify-center space-y-4">
+                <div className="p-6 bg-rose-500/5 border-l-4 border-rose-500 rounded-2xl hover:bg-rose-500/10 transition-colors">
+                  <div className="flex items-center gap-2 text-rose-400 font-bold text-[10px] uppercase mb-2 tracking-widest">
+                    <AlertCircle size={14} /> Rủi ro hệ thống
+                  </div>
+                  <p className="text-xs text-zinc-300 leading-relaxed font-medium">
+                    Đơn hàng quá <span className="text-white font-bold">15 ngày</span> có <span className="text-rose-400 font-bold">85% xác suất</span> nhận đánh giá 1-2 sao.
+                  </p>
+                </div>
+                <div className="p-6 bg-emerald-500/5 border-l-4 border-emerald-500 rounded-2xl hover:bg-emerald-500/10 transition-colors">
+                  <div className="flex items-center gap-2 text-emerald-400 font-bold text-[10px] uppercase mb-2 tracking-widest">
+                    <TrendingUp size={14} /> Cơ hội phục hồi
+                  </div>
+                  <p className="text-xs text-zinc-300 leading-relaxed font-medium">
+                    Giảm thời gian giao <span className="text-white font-bold">2 ngày</span> giúp thu hồi <span className="text-emerald-400 font-bold">6.4% CSAT</span> tiềm năng.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* CHÂN TRANG (GLOBAL FOOTER) */}
+        <footer className="px-10 py-12 border-t border-zinc-800/50 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-6">
+            <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-[0.2em]">Olist Intelligence Unit</span>
+            <div className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
+            <span className="text-[10px] text-zinc-600 font-medium tracking-widest uppercase">Internal Dashboard 2024</span>
+          </div>
+          <div className="flex items-center gap-8 text-[10px] font-bold text-zinc-600 uppercase tracking-widest">
+            <a href="#" className="hover:text-blue-400 transition-colors">Data Privacy</a>
+            <a href="#" className="hover:text-blue-400 transition-colors">Audit Status</a>
+            <a href="#" className="hover:text-blue-400 transition-colors">Help Center</a>
+          </div>
+        </footer>
+      </main>
+    </div>
+  );
+}

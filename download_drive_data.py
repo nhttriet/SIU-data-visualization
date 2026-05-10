@@ -7,12 +7,12 @@ from pathlib import Path
 
 import gdown
 
-
+# Baseline URL cho Google Drive UC
 BASE_URL = "https://drive.google.com/uc?id={file_id}"
-
 
 @dataclass(frozen=True)
 class DownloadSpec:
+    """Atomic Design: Định nghĩa cấu trúc tải tệp tin."""
     file_id: str
     output_name: str
     relative_dir: str
@@ -25,14 +25,19 @@ class DownloadSpec:
     def destination(self) -> Path:
         return Path(self.relative_dir) / self.output_name
 
-
+# Target Assets: Mapping 15 file cần thiết cho Dashboard V2.5
 TARGET_FILES: list[DownloadSpec] = [
+    # 1. Core Datasets (Processed)
     DownloadSpec("1u5qJDBh8KIi80AnMQGi2H0USYIeHEVvm", "order_level_dataset.csv", "data/processed"),
     DownloadSpec("1ouXc3RCoY3Sxy2tIZsu_RsCYtzU0nfUc", "item_level_dataset.csv", "data/processed"),
     DownloadSpec("1ZVluh01LHCZ_XUuj8o-ikwz5nujrf2ey", "state_level_enhanced.csv", "data/processed"),
     DownloadSpec("1VhM7QIOgdcqoxTBCu6AyO_4wOWRWn1sh", "route_level_enhanced.csv", "data/processed"),
+    
+    # 2. Audit Reports
     DownloadSpec("1dyww1DRx992tQjISpsX58E2zGqmzZ-rf", "01_delivery_audit.csv", "data/reports"),
     DownloadSpec("1uu9Gr_Kd6MaDslvhdNWiPjztf2Yyazzs", "05_review_compare.csv", "data/reports"),
+    
+    # 3. Visual Figures (Pre-rendered HTML plots)
     DownloadSpec("104uNpD47k7JhYscWdFrp0EEadGrpwuWm", "01_monthly_order_trend.html", "data/figures"),
     DownloadSpec("1bQujvOATdyDqTdZVRZCehOtKLeZpPAYH", "02_top_customer_states.html", "data/figures"),
     DownloadSpec("1ODrIPEZoj_CxiFN1NbqEvgE0-JjYsE56", "03_delivery_days_distribution.html", "data/figures"),
@@ -44,14 +49,15 @@ TARGET_FILES: list[DownloadSpec] = [
     DownloadSpec("1jH1N-WFb-nxyjV5-yMSvV75bxujvzIrx", "09_review_score_distribution.html", "data/figures"),
 ]
 
-
 def download_file(spec: DownloadSpec, base_dir: Path, overwrite: bool = False) -> Path:
+    """Xử lý logic tải file với cơ chế retry và ghi đè."""
     destination = base_dir / spec.destination
     destination.parent.mkdir(parents=True, exist_ok=True)
 
     if destination.exists() and not overwrite:
         return destination
 
+    # Cơ chế tải tạm (Temporary file) để tránh lỗi file hỏng khi mất mạng
     temp_path = destination.with_suffix(destination.suffix + ".part")
     if temp_path.exists():
         temp_path.unlink()
@@ -62,35 +68,32 @@ def download_file(spec: DownloadSpec, base_dir: Path, overwrite: bool = False) -
         quiet=False,
         use_cookies=False,
     )
+    
     if not result:
-        raise RuntimeError(f"Không tải được: {spec.output_name}")
+        raise RuntimeError(f"❌ Không tải được: {spec.output_name}")
 
     if destination.exists():
         destination.unlink()
     shutil.move(str(temp_path), str(destination))
     return destination
 
-
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Download only the files needed by the dashboard.")
-    parser.add_argument("--base-dir", default=Path(__file__).resolve().parent, type=Path, help="Project root")
-    parser.add_argument("--overwrite", action="store_true", help="Re-download files even if they already exist")
-    parser.add_argument("--list-only", action="store_true", help="Print target files without downloading")
+    parser = argparse.ArgumentParser(description="Olist Data Sync Automation.")
+    parser.add_argument("--base-dir", default=Path(__file__).resolve().parent, type=Path)
+    parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
 
-    if args.list_only:
-        for spec in TARGET_FILES:
-            print(spec.destination.as_posix())
-        return
-
-    downloaded: list[Path] = []
+    print(f"🚀 Bắt đầu đồng bộ {len(TARGET_FILES)} tài nguyên từ Google Drive...")
+    
+    downloaded = []
     for spec in TARGET_FILES:
-        downloaded.append(download_file(spec, args.base_dir, overwrite=args.overwrite))
+        try:
+            p = download_file(spec, args.base_dir, overwrite=args.overwrite)
+            downloaded.append(p)
+        except Exception as e:
+            print(f"⚠️ Cảnh báo: {e}")
 
-    print("Downloaded files:")
-    for file_path in downloaded:
-        print(f"- {file_path.relative_to(args.base_dir)}")
-
+    print(f"\n✅ Hoàn tất. Đã kiểm tra/tải {len(downloaded)} tệp tin.")
 
 if __name__ == "__main__":
     main()

@@ -1,22 +1,94 @@
-FROM python:3.12-slim
+# syntax=docker/dockerfile:1.7
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Stage 1 — Sync raw CSV from Google Drive (cached layer)
+# ─────────────────────────────────────────────────────────────────────────────
+FROM python:3.12-slim AS data-sync
+
+WORKDIR /sync
+
+RUN pip install --no-cache-dir gdown==5.2.0
+
+COPY download_drive_data.py ./
+RUN python download_drive_data.py
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Stage 2 — Run ETL: CSV → aggregated JSON
+# ─────────────────────────────────────────────────────────────────────────────
+FROM python:3.12-slim AS etl
+
+WORKDIR /etl
+
+COPY etl/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY etl/build_data.py ./
+COPY --from=data-sync /sync/data /data
+
+RUN python build_data.py --data /data --out /out/data
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Stage 3 — Install Node deps (cached separately from source)
+# ─────────────────────────────────────────────────────────────────────────────
+FROM node:24-alpine AS deps
 
 WORKDIR /app
 
-ENV PORT=8080
+COPY web/package.json web/package-lock.json* ./
+RUN npm ci --no-audit --no-fund
 
-# Install minimal runtime dependencies
-COPY requirements.dashboard.txt ./
-RUN pip install --no-cache-dir -r requirements.dashboard.txt
+# ─────────────────────────────────────────────────────────────────────────────
+# Stage 4 — Build static Next.js export
+# ─────────────────────────────────────────────────────────────────────────────
+FROM node:24-alpine AS web-build
 
-# Copy application files
-COPY dashboard.py ./
-COPY download_drive_data.py ./
+WORKDIR /app
 
-# Create data directory structure
-RUN mkdir -p /app/data/raw /app/data/processed /app/data/figures /app/data/reports
+ENV NEXT_TELEMETRY_DISABLED=1
 
-EXPOSE 8501
+COPY --from=deps /app/node_modules ./node_modules
+COPY web/ ./
+COPY --from=etl /out/data ./public/data
+
+RUN npm run build
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Stage 5 — Serve static export via nginx
+# ─────────────────────────────────────────────────────────────────────────────
+FROM nginx:1.27-alpine AS runtime
+
+RUN rm /etc/nginx/conf.d/default.conf
+
+COPY <<'EOF' /etc/nginx/conf.d/dashboard.conf
+server {
+    listen       8080;
+    server_name  _;
+
+    root   /usr/share/nginx/html;
+    index  index.html;
+
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml;
+    gzip_min_length 1024;
+
+    location ~* \.(js|css|woff2?|svg|png|jpg|jpeg|gif|ico)$ {
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+    }
+
+    location / {
+        try_files $uri $uri.html $uri/ =404;
+    }
+
+    error_page 404 /404.html;
+}
+EOF
+
+COPY --from=web-build /app/out /usr/share/nginx/html
+
 EXPOSE 8080
 
-# Run the Streamlit dashboard
-CMD ["sh", "-c", "streamlit run dashboard.py --server.port=${PORT} --server.address=0.0.0.0 --server.headless=true"]
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+    CMD wget -q --spider http://localhost:8080/ || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]

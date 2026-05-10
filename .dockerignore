@@ -1,0 +1,19 @@
+**/.git
+**/.next
+**/.venv
+**/__pycache__
+**/node_modules
+**/out
+**/.DS_Store
+
+# Local data — re-fetched in data-sync stage
+data/
+
+# Old streamlit assets
+dashboard.py
+requirements.dashboard.txt
+index.html
+
+# Editor
+.vscode/
+.idea/
