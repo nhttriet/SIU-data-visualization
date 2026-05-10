@@ -128,8 +128,9 @@ function RouteRow({
             />
           );
         }
-        const intensity = Math.min(1, cell.gmv / maxGmv);
+        const intensity = Math.pow(Math.min(1, cell.gmv / maxGmv), 0.4);
         const lateColor = lateRateColor(cell.lateRate);
+        const alpha = (0.25 + intensity * 0.65).toFixed(2);
         return (
           <button
             key={d}
@@ -137,7 +138,7 @@ function RouteRow({
             onClick={() => setActive(cell)}
             className="group relative h-9 rounded-sm transition-transform hover:scale-110"
             style={{
-              background: `${lateColor}${Math.floor(0.18 + intensity * 0.6 * 255).toString(16).padStart(2, "0")}`,
+              background: hexToRgba(lateColor, Number(alpha)),
               border: `1px solid ${lateColor}`,
             }}
             title={`${origin} → ${d} | ${cell.lateRate.toFixed(1)}% late | ${formatCompact(cell.gmv)} GMV`}
@@ -159,6 +160,21 @@ function Legend({ color, label }: { color: string; label: string }) {
       {label}
     </span>
   );
+}
+
+function hexToRgba(hex: string, alpha: number): string {
+  const h = hex.replace("#", "");
+  const full =
+    h.length === 3
+      ? h
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : h.slice(0, 6);
+  const r = parseInt(full.slice(0, 2), 16);
+  const g = parseInt(full.slice(2, 4), 16);
+  const b = parseInt(full.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 function DetailStat({
