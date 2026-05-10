@@ -61,13 +61,9 @@ st.markdown(
     #MainMenu, .stDeployButton, [data-testid="stToolbar"], footer {display: none !important;}
     header[data-testid="stHeader"] {background: transparent; height: 0;}
 
-    /* ===== Global background — deep space gradient with mesh ===== */
+    /* ===== Global background — white ===== */
     .stApp {
-        background:
-            radial-gradient(circle at 15% 20%, rgba(139, 92, 246, 0.18) 0%, transparent 40%),
-            radial-gradient(circle at 85% 80%, rgba(34, 211, 238, 0.12) 0%, transparent 40%),
-            radial-gradient(circle at 50% 50%, rgba(244, 63, 94, 0.08) 0%, transparent 50%),
-            linear-gradient(180deg, #050816 0%, #0a0e1a 50%, #0d1224 100%);
+        background: #ffffff;
         background-attachment: fixed;
     }
 
@@ -76,9 +72,9 @@ st.markdown(
         content: "";
         position: fixed;
         inset: 0;
-        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+        background-image: none;
         pointer-events: none;
-        opacity: 0.6;
+        opacity: 0;
         z-index: 0;
     }
 
@@ -94,35 +90,35 @@ st.markdown(
     /* ===== Typography ===== */
     html, body, [class*="css"], .stMarkdown, p, span, div {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-        color: #e2e8f0;
+        color: #6b7280;
     }
 
     h1 {
         font-family: 'Inter', sans-serif !important;
-        color: #f8fafc !important;
+        color: #374151 !important;
         font-size: 2.1rem !important;
         font-weight: 800 !important;
         letter-spacing: -0.02em !important;
         margin: 0 0 0.3rem 0 !important;
-        background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 50%, #67e8f9 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        background: none;
+        -webkit-background-clip: unset;
+        -webkit-text-fill-color: unset;
+        background-clip: unset;
     }
 
     h2 {
-        color: #f1f5f9 !important;
+        color: #4b5563 !important;
         font-size: 1.25rem !important;
         font-weight: 700 !important;
         letter-spacing: -0.01em !important;
         margin: 2rem 0 1rem 0 !important;
         padding-left: 12px !important;
-        border-left: 3px solid #a78bfa !important;
+        border-left: 3px solid #9ca3af !important;
         border-bottom: none !important;
     }
 
     h3, h4 {
-        color: #cbd5e1 !important;
+        color: #6b7280 !important;
         font-size: 0.95rem !important;
         font-weight: 600 !important;
         text-transform: uppercase;
@@ -130,38 +126,38 @@ st.markdown(
         margin: 1.2rem 0 0.6rem 0 !important;
     }
 
-    p, .stMarkdown p { color: #94a3b8; line-height: 1.6; }
+    p, .stMarkdown p { color: #9ca3af; line-height: 1.6; }
 
     /* ===== Sidebar ===== */
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #050816 0%, #0a0e1a 100%) !important;
-        border-right: 1px solid rgba(139, 92, 246, 0.15);
+        background: #f9fafb !important;
+        border-right: 1px solid #e5e7eb;
     }
     section[data-testid="stSidebar"] > div {
         background: transparent !important;
         padding-top: 1rem;
     }
     section[data-testid="stSidebar"] * {
-        color: #cbd5e1 !important;
+        color: #6b7280 !important;
         font-family: 'Inter', sans-serif !important;
     }
     section[data-testid="stSidebar"] h1 {
-        color: #f8fafc !important;
+        color: #374151 !important;
         font-size: 1.3rem !important;
-        background: linear-gradient(135deg, #ffffff 0%, #a78bfa 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        background: none;
+        -webkit-background-clip: unset;
+        -webkit-text-fill-color: unset;
+        background-clip: unset;
     }
     section[data-testid="stSidebar"] h3 {
-        color: #94a3b8 !important;
+        color: #9ca3af !important;
         font-size: 0.75rem !important;
         text-transform: uppercase;
         letter-spacing: 0.1em;
         font-weight: 700 !important;
     }
     section[data-testid="stSidebar"] label {
-        color: #cbd5e1 !important;
+        color: #6b7280 !important;
         font-weight: 500 !important;
         font-size: 0.85rem !important;
     }
@@ -172,10 +168,10 @@ st.markdown(
         transition: all 0.2s ease;
     }
     section[data-testid="stSidebar"] .stRadio label:hover {
-        background: rgba(139, 92, 246, 0.1);
+        background: rgba(243, 244, 246, 1);
     }
     section[data-testid="stSidebar"] .stCaption {
-        color: #64748b !important;
+        color: #d1d5db !important;
         font-size: 0.75rem !important;
     }
 
@@ -190,10 +186,10 @@ st.markdown(
 
     .kpi-card {
         position: relative;
-        background: linear-gradient(135deg, rgba(20, 27, 45, 0.85) 0%, rgba(13, 18, 36, 0.85) 100%);
+        background: #f9fafb;
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(148, 163, 184, 0.1);
+        border: 1px solid #e5e7eb;
         border-radius: 16px;
         padding: 1.3rem 1.4rem;
         overflow: hidden;
@@ -205,7 +201,7 @@ st.markdown(
         inset: 0;
         border-radius: 16px;
         padding: 1px;
-        background: linear-gradient(135deg, var(--accent, #a78bfa) 0%, transparent 60%);
+        background: linear-gradient(135deg, var(--accent, #d1d5db) 0%, transparent 60%);
         -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
         -webkit-mask-composite: xor;
         mask-composite: exclude;
@@ -216,20 +212,20 @@ st.markdown(
         position: absolute;
         top: 0; left: 0; right: 0;
         height: 3px;
-        background: linear-gradient(90deg, transparent, var(--accent, #a78bfa), transparent);
-        opacity: 0.8;
+        background: linear-gradient(90deg, transparent, var(--accent, #d1d5db), transparent);
+        opacity: 0.3;
     }
     .kpi-card:hover {
         transform: translateY(-4px);
-        border-color: rgba(148, 163, 184, 0.25);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 0 30px var(--glow, rgba(167, 139, 250, 0.15));
+        border-color: rgba(209, 213, 219, 0.6);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1), 0 0 30px var(--glow, rgba(209, 213, 219, 0.2));
     }
     .kpi-icon {
         width: 38px;
         height: 38px;
         border-radius: 10px;
-        background: var(--accent-bg, rgba(167, 139, 250, 0.15));
-        color: var(--accent, #a78bfa);
+        background: var(--accent-bg, #f3f4f6);
+        color: var(--accent, #9ca3af);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -237,7 +233,7 @@ st.markdown(
         margin-bottom: 0.8rem;
     }
     .kpi-label {
-        color: #94a3b8;
+        color: #9ca3af;
         font-size: 0.78rem;
         font-weight: 600;
         text-transform: uppercase;
@@ -245,7 +241,7 @@ st.markdown(
         margin-bottom: 0.3rem;
     }
     .kpi-value {
-        color: #f8fafc;
+        color: #374151;
         font-size: 2rem;
         font-weight: 800;
         font-family: 'Inter', sans-serif;
@@ -253,7 +249,7 @@ st.markdown(
         line-height: 1.1;
         letter-spacing: -0.02em;
     }
-    .kpi-unit { color: #64748b; font-size: 0.85rem; font-weight: 500; margin-left: 4px; }
+    .kpi-unit { color: #d1d5db; font-size: 0.85rem; font-weight: 500; margin-left: 4px; }
     .kpi-delta {
         margin-top: 0.6rem;
         font-size: 0.78rem;
@@ -281,30 +277,30 @@ st.markdown(
     /* ===== Filter chips ===== */
     .filter-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 0.5rem 0 1.2rem 0; }
     .filter-chip {
-        background: rgba(139, 92, 246, 0.12);
-        color: #c4b5fd;
+        background: #f3f4f6;
+        color: #6b7280;
         padding: 6px 14px;
         border-radius: 999px;
         font-size: 0.8rem;
         font-weight: 600;
-        border: 1px solid rgba(139, 92, 246, 0.25);
+        border: 1px solid #e5e7eb;
         backdrop-filter: blur(10px);
     }
 
     /* ===== Glass panels for charts/tables ===== */
     [data-testid="stDataFrame"], [data-testid="stTable"] {
-        background: rgba(20, 27, 45, 0.6) !important;
-        border: 1px solid rgba(148, 163, 184, 0.1) !important;
+        background: #f9fafb !important;
+        border: 1px solid #e5e7eb !important;
         border-radius: 12px !important;
         backdrop-filter: blur(10px);
         overflow: hidden;
     }
-    [data-testid="stDataFrame"] table { color: #e2e8f0 !important; }
+    [data-testid="stDataFrame"] table { color: #374151 !important; }
     [data-testid="stDataFrame"] thead {
-        background: rgba(139, 92, 246, 0.1) !important;
+        background: #f3f4f6 !important;
     }
     [data-testid="stDataFrame"] thead th {
-        color: #c4b5fd !important;
+        color: #6b7280 !important;
         font-weight: 600 !important;
         text-transform: uppercase;
         font-size: 0.75rem !important;
@@ -314,8 +310,8 @@ st.markdown(
     /* Wrap iframe charts in glass card */
     iframe { border-radius: 12px; background: rgba(255,255,255,0.97); }
     .element-container:has(iframe) {
-        background: rgba(20, 27, 45, 0.5);
-        border: 1px solid rgba(148, 163, 184, 0.1);
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
         border-radius: 14px;
         padding: 8px;
         backdrop-filter: blur(10px);
@@ -323,41 +319,41 @@ st.markdown(
 
     /* ===== Info / Warning panels ===== */
     [data-testid="stAlert"], .stInfo, .stWarning, .stSuccess, .stError {
-        background: rgba(20, 27, 45, 0.7) !important;
-        border: 1px solid rgba(148, 163, 184, 0.15) !important;
+        background: #f9fafb !important;
+        border: 1px solid #e5e7eb !important;
         border-radius: 12px !important;
         backdrop-filter: blur(10px);
     }
-    .stInfo { border-left: 3px solid #a78bfa !important; }
+    .stInfo { border-left: 3px solid #9ca3af !important; }
     .stWarning { border-left: 3px solid #f59e0b !important; }
     .stSuccess { border-left: 3px solid #10b981 !important; }
-    .stInfo *, .stWarning *, .stSuccess *, .stError * { color: #e2e8f0 !important; }
+    .stInfo *, .stWarning *, .stSuccess *, .stError * { color: #6b7280 !important; }
 
     /* ===== Inputs ===== */
     .stSelectbox > div > div, .stMultiSelect > div > div, .stDateInput > div > div, .stNumberInput > div > div {
-        background: rgba(20, 27, 45, 0.7) !important;
-        border: 1px solid rgba(148, 163, 184, 0.15) !important;
+        background: #ffffff !important;
+        border: 1px solid #d1d5db !important;
         border-radius: 10px !important;
-        color: #e2e8f0 !important;
+        color: #374151 !important;
     }
     .stSelectbox > div > div:hover, .stMultiSelect > div > div:hover {
-        border-color: rgba(139, 92, 246, 0.4) !important;
+        border-color: #9ca3af !important;
     }
 
     /* ===== Buttons ===== */
     .stButton > button {
-        background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%) !important;
+        background: #6b7280 !important;
         color: white !important;
         border: none !important;
         border-radius: 10px !important;
         padding: 0.6rem 1.4rem !important;
         font-weight: 600 !important;
         transition: all 0.2s ease !important;
-        box-shadow: 0 4px 14px rgba(139, 92, 246, 0.35);
+        box-shadow: 0 4px 14px rgba(107, 114, 128, 0.25);
     }
     .stButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
+        box-shadow: 0 8px 25px rgba(107, 114, 128, 0.35);
     }
 
     /* ===== Divider ===== */
@@ -379,9 +375,9 @@ st.markdown(
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: rgba(139, 92, 246, 0.12);
-        border: 1px solid rgba(139, 92, 246, 0.3);
-        color: #c4b5fd;
+        background: #f3f4f6;
+        border: 1px solid #e5e7eb;
+        color: #6b7280;
         padding: 4px 10px;
         border-radius: 999px;
         font-size: 0.7rem;
@@ -401,7 +397,7 @@ st.markdown(
     }
 
     .subtitle {
-        color: #94a3b8 !important;
+        color: #9ca3af !important;
         font-size: 0.95rem !important;
         font-weight: 400 !important;
         margin: 0 0 1rem 0 !important;
@@ -409,15 +405,15 @@ st.markdown(
 
     /* Insight panel */
     .insight-card {
-        background: linear-gradient(135deg, rgba(20, 27, 45, 0.8) 0%, rgba(13, 18, 36, 0.8) 100%);
+        background: #f9fafb;
         backdrop-filter: blur(20px);
-        border: 1px solid rgba(148, 163, 184, 0.12);
+        border: 1px solid #e5e7eb;
         border-radius: 14px;
         padding: 1.2rem 1.3rem;
         margin-bottom: 1rem;
     }
     .insight-card h4 {
-        color: #f1f5f9 !important;
+        color: #374151 !important;
         font-size: 0.95rem !important;
         margin: 0 0 0.8rem 0 !important;
         display: flex;
@@ -429,12 +425,12 @@ st.markdown(
         justify-content: space-between;
         align-items: center;
         padding: 8px 0;
-        border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+        border-bottom: 1px solid #f3f4f6;
         font-size: 0.88rem;
     }
     .insight-row:last-child { border-bottom: none; }
-    .insight-label { color: #94a3b8; }
-    .insight-value { color: #f1f5f9; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .insight-label { color: #9ca3af; }
+    .insight-value { color: #374151; font-weight: 600; font-variant-numeric: tabular-nums; }
     .badge-ok   { background: rgba(16,185,129,0.15); color: #34d399; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
     .badge-warn { background: rgba(245,158,11,0.15); color: #fbbf24; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
     .badge-bad  { background: rgba(244,63,94,0.15);  color: #fb7185; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
