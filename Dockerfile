@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1.7
-
 # ─────────────────────────────────────────────────────────────────────────────
 # Stage 1 — Sync raw CSV from Google Drive (cached layer)
 # ─────────────────────────────────────────────────────────────────────────────
@@ -59,31 +57,7 @@ FROM nginx:1.27-alpine AS runtime
 
 RUN rm /etc/nginx/conf.d/default.conf
 
-COPY <<'EOF' /etc/nginx/conf.d/dashboard.conf
-server {
-    listen       8080;
-    server_name  _;
-
-    root   /usr/share/nginx/html;
-    index  index.html;
-
-    gzip on;
-    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml;
-    gzip_min_length 1024;
-
-    location ~* \.(js|css|woff2?|svg|png|jpg|jpeg|gif|ico)$ {
-        expires 30d;
-        add_header Cache-Control "public, immutable";
-    }
-
-    location / {
-        try_files $uri $uri.html $uri/ =404;
-    }
-
-    error_page 404 /404.html;
-}
-EOF
-
+COPY web/nginx.conf /etc/nginx/conf.d/dashboard.conf
 COPY --from=web-build /app/out /usr/share/nginx/html
 
 EXPOSE 8080
