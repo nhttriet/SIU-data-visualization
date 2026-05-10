@@ -51,80 +51,80 @@ export function ImpactCard({ csat }: { csat: CsatData }) {
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
-        <div className="relative h-[260px] rounded-lg bg-[var(--card-elevated)] p-4">
-          <ResponsiveContainer>
-            <ScatterChart margin={{ top: 12, right: 16, bottom: 28, left: 16 }}>
-              <CartesianGrid stroke={COLORS.border} strokeDasharray="3 3" />
-              <XAxis
-                type="number"
-                dataKey="x"
-                name="Số ngày giao"
-                stroke={COLORS.muted}
-                tick={{ fill: COLORS.muted, fontSize: 11 }}
-                tickLine={false}
-                domain={[0, 40]}
-                ticks={[5, 10, 15, 20, 30, 40]}
-                label={{
-                  value: "Delivery days (bucket)",
-                  position: "insideBottom",
-                  offset: -16,
-                  fill: COLORS.muted,
-                  fontSize: 11,
-                }}
-              />
-              <YAxis
-                type="number"
-                dataKey="y"
-                domain={[1, 5]}
-                ticks={[1, 2, 3, 4, 5]}
-                stroke={COLORS.muted}
-                tick={{ fill: COLORS.muted, fontSize: 11 }}
-                tickLine={false}
-                label={{
-                  value: "CSAT",
-                  angle: -90,
-                  position: "insideLeft",
-                  fill: COLORS.muted,
-                  fontSize: 11,
-                }}
-              />
-              <ZAxis type="number" dataKey="orders" range={[80, 600]} />
-              <ReferenceLine
-                segment={[
-                  { x: 5, y: points[0]?.y ?? 4.5 },
-                  { x: 40, y: points.at(-1)?.y ?? 2.5 },
-                ]}
-                stroke={COLORS.danger}
-                strokeDasharray="6 4"
-                strokeWidth={1.5}
-              />
-              <Tooltip
-                cursor={{ stroke: COLORS.borderStrong, strokeDasharray: "3 3" }}
-                contentStyle={{
-                  background: "var(--card-elevated)",
-                  border: "1px solid var(--border-strong)",
-                  borderRadius: 8,
-                  fontSize: 12,
-                }}
-                formatter={(value, name) => {
-                  const v = Number(value);
-                  if (name === "y") return [v.toFixed(2), "CSAT TB"] as [string, string];
-                  if (name === "orders") return [v.toLocaleString(), "Số đơn"] as [string, string];
-                  return [String(value), String(name)] as [string, string];
-                }}
-                labelFormatter={() => ""}
-              />
-              <Scatter data={points} fill={COLORS.danger} fillOpacity={0.7} />
-            </ScatterChart>
-          </ResponsiveContainer>
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 transform">
-            <div className="text-center">
-              <div className="kpi-numeric text-2xl font-semibold text-[var(--danger)]">
-                {(corr * 0.36).toFixed(2)} pts
-              </div>
-              <div className="text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
-                Mỗi 1 ngày trễ làm sụt điểm CSAT
-              </div>
+        <div className="flex flex-col rounded-lg bg-[var(--card-elevated)]">
+          <div className="h-[240px] p-4 pb-2">
+            <ResponsiveContainer>
+              <ScatterChart margin={{ top: 8, right: 16, bottom: 24, left: 8 }}>
+                <CartesianGrid stroke={COLORS.border} strokeDasharray="3 3" />
+                <XAxis
+                  type="number"
+                  dataKey="x"
+                  name="Số ngày giao"
+                  stroke={COLORS.muted}
+                  tick={{ fill: COLORS.muted, fontSize: 11 }}
+                  tickLine={false}
+                  domain={[0, 40]}
+                  ticks={[5, 10, 15, 20, 30, 40]}
+                  label={{
+                    value: "Delivery days",
+                    position: "insideBottom",
+                    offset: -12,
+                    fill: COLORS.muted,
+                    fontSize: 10,
+                  }}
+                />
+                <YAxis
+                  type="number"
+                  dataKey="y"
+                  domain={[1, 5]}
+                  ticks={[1, 2, 3, 4, 5]}
+                  stroke={COLORS.muted}
+                  tick={{ fill: COLORS.muted, fontSize: 11 }}
+                  tickLine={false}
+                  label={{
+                    value: "CSAT",
+                    angle: -90,
+                    position: "insideLeft",
+                    fill: COLORS.muted,
+                    fontSize: 10,
+                  }}
+                />
+                <ZAxis type="number" dataKey="orders" range={[80, 600]} />
+                <ReferenceLine
+                  segment={[
+                    { x: 5, y: points[0]?.y ?? 4.5 },
+                    { x: 40, y: points.at(-1)?.y ?? 2.5 },
+                  ]}
+                  stroke={COLORS.danger}
+                  strokeDasharray="6 4"
+                  strokeWidth={1.5}
+                />
+                <Tooltip
+                  cursor={{ stroke: COLORS.borderStrong, strokeDasharray: "3 3" }}
+                  contentStyle={{
+                    background: "var(--card-elevated)",
+                    border: "1px solid var(--border-strong)",
+                    borderRadius: 8,
+                    fontSize: 12,
+                  }}
+                  formatter={(value, name) => {
+                    const v = Number(value);
+                    if (name === "y") return [v.toFixed(2), "CSAT TB"] as [string, string];
+                    if (name === "orders") return [v.toLocaleString(), "Số đơn"] as [string, string];
+                    return [String(value), String(name)] as [string, string];
+                  }}
+                  labelFormatter={() => ""}
+                />
+                <Scatter data={points} fill={COLORS.danger} fillOpacity={0.7} />
+              </ScatterChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="border-t border-[var(--border)] px-4 py-3 text-center">
+            <div className="kpi-numeric text-xl font-semibold text-[var(--danger)]">
+              {(corr * 0.36).toFixed(2)} pts
+            </div>
+            <div className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--muted)]">
+              Mỗi 1 ngày trễ làm sụt điểm CSAT
             </div>
           </div>
         </div>
