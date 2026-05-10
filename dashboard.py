@@ -7,12 +7,24 @@ import subprocess
 import sys
 
 # ============================================================
+# PAGE CONFIG
+# ============================================================
+st.set_page_config(
+    page_title="OLIST Logistics Intelligence",
+    page_icon="◆",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={"Get help": None, "Report a bug": None, "About": None},
+)
+
+
+# ============================================================
 # INITIALIZE DATA
 # ============================================================
 def ensure_data_exists():
     """Download data from Google Drive if it doesn't exist."""
     data_file = Path(__file__).parent / "data" / "processed" / "order_level_dataset.csv"
-    
+
     if not data_file.exists():
         st.warning("📥 Downloading required data from Google Drive... (this may take a few minutes)")
         try:
@@ -21,7 +33,7 @@ def ensure_data_exists():
                 cwd=Path(__file__).parent,
                 capture_output=True,
                 text=True,
-                timeout=300
+                timeout=300,
             )
             if result.returncode == 0:
                 st.success("✅ Data downloaded successfully!")
@@ -32,18 +44,8 @@ def ensure_data_exists():
             st.error(f"❌ Error downloading data: {str(e)}")
             st.stop()
 
-ensure_data_exists()
 
-# ============================================================
-# PAGE CONFIG
-# ============================================================
-st.set_page_config(
-    page_title="OLIST Logistics Intelligence",
-    page_icon="◆",
-    layout="wide",
-    initial_sidebar_state="expanded",
-    menu_items={"Get help": None, "Report a bug": None, "About": None},
-)
+ensure_data_exists()
 
 # ============================================================
 # MODERN DARK UI — glassmorphism + neon accents
